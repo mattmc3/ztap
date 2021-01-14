@@ -14,7 +14,7 @@ function @test() {
     (( TAPZ_FAILED = TAPZ_FAILED + 1 ))
 
     local operator expected actual
-    if [[ $1 -eq "!" ]]; then
+    if [[ $1 == "!" ]]; then
       operator="$1 $2"
       expected="${3:q}"
       actual="${__tapz_test_expectations[$2]:-unrecognized test operator: $operator}"
