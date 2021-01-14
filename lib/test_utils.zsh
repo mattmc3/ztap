@@ -14,7 +14,11 @@ function @test() {
     (( TAPZ_FAILED = TAPZ_FAILED + 1 ))
 
     local operator expected actual
-    if [[ -n $3 ]]; then
+    if [[ $1 -eq "!" ]]; then
+      operator="$1 $2"
+      expected="${3:q}"
+      actual="${__tapz_test_expectations[$2]:-unrecognized test operator: $operator}"
+    elif [[ -n $3 ]]; then
       operator=$2
       expected="${3:q}"
       actual="${1:q}"
@@ -53,26 +57,26 @@ function test_runner() {
   # setup variables
   autoload -U colors && colors
   typeset -Ag __tapz_test_expectations
-  __tapz_test_expectations[-n]="did not find a non-zero length string"
-  __tapz_test_expectations[-z]="did not find a zero length string"
-  __tapz_test_expectations[-b]="did not find a block device"
-  __tapz_test_expectations[-c]="did not find a character device"
-  __tapz_test_expectations[-d]="did not find a directory"
-  __tapz_test_expectations[-e]="did not find an existing file"
-  __tapz_test_expectations[-f]="did not find a regular file"
-  __tapz_test_expectations[-g]="did not find a file with the set-group-ID bit set"
-  __tapz_test_expectations[-G]="did not find a file with same group ID as the current user"
-  __tapz_test_expectations[-k]="did not find a file with the sticky bit set"
-  __tapz_test_expectations[-L]="did not find a symbolic link"
-  __tapz_test_expectations[-O]="did not find a file owned by the current user"
-  __tapz_test_expectations[-p]="did not find a named pipe"
-  __tapz_test_expectations[-r]="did not find a file marked as readable"
-  __tapz_test_expectations[-s]="did not find a file of size greater than zero"
-  __tapz_test_expectations[-S]="did not find a socket"
-  __tapz_test_expectations[-t]="did not find a terminal tty file descriptor"
-  __tapz_test_expectations[-u]="did not find a file with the set-user-ID bit set"
-  __tapz_test_expectations[-w]="did not find a file marked as writable"
-  __tapz_test_expectations[-x]="did not find a file marked as executable"
+  __tapz_test_expectations[-n]="a non-zero length string exists"
+  __tapz_test_expectations[-z]="a zero length string exists"
+  __tapz_test_expectations[-b]="a block device exists"
+  __tapz_test_expectations[-c]="a character device exists"
+  __tapz_test_expectations[-d]="a directory exists"
+  __tapz_test_expectations[-e]="an existing file exists"
+  __tapz_test_expectations[-f]="a regular file exists"
+  __tapz_test_expectations[-g]="a file with the set-group-ID bit set exists"
+  __tapz_test_expectations[-G]="a file with same group ID as the current user exists"
+  __tapz_test_expectations[-k]="a file with the sticky bit set exists"
+  __tapz_test_expectations[-L]="a symbolic link exists"
+  __tapz_test_expectations[-O]="a file owned by the current user exists"
+  __tapz_test_expectations[-p]="a named pipe exists"
+  __tapz_test_expectations[-r]="a file marked as readable exists"
+  __tapz_test_expectations[-s]="a file of size greater than zero exists"
+  __tapz_test_expectations[-S]="a socket exists"
+  __tapz_test_expectations[-t]="a terminal tty file descriptor exists"
+  __tapz_test_expectations[-u]="a file with the set-user-ID bit set exists"
+  __tapz_test_expectations[-w]="a file marked as writable exists"
+  __tapz_test_expectations[-x]="a file marked as executable exists"
   TAPZ_TESTNUM=${TAPZ_TESTNUM:-0}
   TAPZ_COLORIZE=${TAPZ_COLORIZE:-false}
   if [[ $TAPZ_COLORIZE == true ]]; then
