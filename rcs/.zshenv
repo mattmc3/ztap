@@ -1,1 +1,1 @@
-[[ -f "$TAPZ_HOME/lib/test_utils.zsh" ]] && . "$TAPZ_HOME/lib/test_utils.zsh"
+[[ -f "$ZTAP_HOME/lib/test_utils.zsh" ]] && . "$ZTAP_HOME/lib/test_utils.zsh"
