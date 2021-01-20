@@ -2,17 +2,18 @@
 
 () {
   0=${(%):-%x}
-  PROJECT_HOME=${0:a:h:h}
+  ZTAP_HOME=${0:a:h:h}
 }
 
 function main() {
   emulate -L zsh
   setopt local_options extended_glob
-  source $PROJECT_HOME/ztap.zsh
-  if [[ ${#@[@]} -gt 0 ]]; then
+
+  source $ZTAP_HOME/ztap.zsh
+  if [[ $# -gt 0 ]]; then
     ztap "$@"
   else
-    ztap $PROJECT_HOME/tests/(^fail).zsh(.N)
+    ztap $ZTAP_HOME/tests/(^fail).zsh(.N)
   fi
 }
 main "$@"
