@@ -49,6 +49,8 @@ function ztap() {
   echo TAP version 13
   for file in $files; do
     # run tests in a clean zsh subprocess
+    REAL_ZDOTDIR=${ZDOTDIR:-$HOME} \
+    REAL_HOME=$HOME \
     HOME=$ZTAP_HOME/rcs \
     ZDOTDIR=$ZTAP_HOME/rcs \
     ZTAP_HOME=$ZTAP_HOME \
