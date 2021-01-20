@@ -34,8 +34,6 @@ not ok 3 got root?
 # fail 1
 ```
 
-> See [reporting options](#reporting-options) for alternatives to TAP output.
-
 Each test file runs inside its own shell, so you can modify the global environment without cluttering your session or breaking other tests.
 If all the tests pass, `ztap` exits with `0` or `1` otherwise.
 
