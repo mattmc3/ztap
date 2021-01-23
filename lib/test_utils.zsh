@@ -1,5 +1,5 @@
 function @echo() {
-  echoc cyan "# ${@}"
+  echo "# ${@}"
 }
 
 function @test() {
@@ -9,11 +9,11 @@ function @test() {
 
   if test $@; then
     (( ZTAP_PASSED = ZTAP_PASSED + 1 ))
-    echoc green "ok ${ZTAP_TESTNUM} ${name}"
+    echo "ok ${ZTAP_TESTNUM} ${name}"
   else
     (( ZTAP_FAILED = ZTAP_FAILED + 1 ))
 
-    echoc red "not ok ${ZTAP_TESTNUM} ${name}"
+    echo "not ok ${ZTAP_TESTNUM} ${name}"
     echo "  ---"
     local not notsym
     if [[ $1 == "!" ]]; then
@@ -54,22 +54,9 @@ function test_runner() {
   echo "ZTAP_FAILED=${ZTAP_FAILED}" >> $resultfile
 }
 
-function echoc() {
-  local a z
-  if [[ -n $fg[$1] ]]; then
-    if [[ $ZTAP_COLORIZE == true ]]; then
-      a=$fg[$1]
-      z=$reset_color
-    fi
-    shift
-  fi
-  echo "${a}${@}${z}"
-}
-
 () {
   # setup
   local o
-  autoload -U colors && colors
 
   typeset -Ag __ztap_oneargtests
   __ztap_oneargtests[-b]="file exists and is a block special file"
@@ -110,7 +97,6 @@ function echoc() {
   __ztap_comparisontests[-le]="integer n1 is algebraically less than or equal to the integer n2"
 
   ZTAP_TESTNUM=${ZTAP_TESTNUM:-0}
-  ZTAP_COLORIZE=${ZTAP_COLORIZE:-false}
   ZTAP_PASSED=0
   ZTAP_FAILED=0
 }

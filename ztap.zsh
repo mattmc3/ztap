@@ -1,6 +1,5 @@
 () {
   typeset -gx ZTAP_HOME=${${(%):-%x}:A:h}
-  autoload -U colors && colors
 }
 
 function ztap() {
@@ -10,10 +9,6 @@ function ztap() {
   local ZTAP_TESTNUM_TOTAL=0
   local ZTAP_PASSED_TOTAL=0
   local ZTAP_FAILED_TOTAL=0
-  local ZTAP_COLORIZE=true
-  local green=$fg[green]
-  local red=$fg[red]
-  local nocolor=$reset_color
 
   case $1 in
     -v|--version)
@@ -25,15 +20,13 @@ function ztap() {
         echo "Options"
         echo "  -v --version    Print version"
         echo "  -h --help       Print this help message"
-        echo "  -p --plaintext  Do not colorize output"
+        echo "  -c --colorize   Colorize the TAP stream"
         return
         ;;
-    -p|--plaintext)
+    -c|--colorize)
         shift
-        local ZTAP_COLORIZE=false
-        local green=
-        local red=
-        local nocolor=
+        ztapc "$@"
+        return $?
         ;;
   esac
 
@@ -55,7 +48,6 @@ function ztap() {
     ZDOTDIR=$ZTAP_HOME/rcs \
     ZTAP_HOME=$ZTAP_HOME \
     ZTAP_TESTNUM=$ZTAP_TESTNUM_TOTAL \
-    ZTAP_COLORIZE=$ZTAP_COLORIZE \
     zsh -d -l -c "test_runner \"$file\""
 
     # get the results variables form the test run
@@ -72,11 +64,15 @@ function ztap() {
 
   echo
   echo "1..$ZTAP_TESTNUM_TOTAL"
-  echo "${green}# pass $ZTAP_PASSED_TOTAL${nocolor}"
+  echo "# pass $ZTAP_PASSED_TOTAL"
   test $ZTAP_FAILED_TOTAL -eq 0 &&
-    echo "${green}# ok${nocolor}" ||
-    echo "${red}# fail ${ZTAP_FAILED_TOTAL}${nocolor}"
+    echo "# ok" ||
+    echo "# fail ${ZTAP_FAILED_TOTAL}"
 
   # return
   test $ZTAP_FAILED -eq 0
+}
+
+function ztapc() {
+  ztap "$@" | $ZTAP_HOME/bin/colorize_tap
 }

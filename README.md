@@ -100,15 +100,6 @@ It's equivalent to `echo "# $argv"`, which prints a TAP comment.
 @echo "=== example ==="
 ```
 
-## TAP output
-
-ZTAP tries to be helpful and colorizes your test output with red and green.
-If that's not your preference, you can always pass the `-p` parameter to `ztap` to get plain text output.
-
-```zsh
-ztap -p ./tests/*.zsh
-```
-
 ## Using ZTAP in your Zsh project
 
 If you are building a Zsh project and would like to use ZTAP to run tests for that project, it can be helpful to include a simple test runner script.
