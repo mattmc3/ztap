@@ -23,14 +23,14 @@ function @test() {
     fi
     if [[ ${#@[@]} -eq 1 ]]; then
       echo "  description: test if string is not the null string"
-      echo "  value: ${1:q}"
+      echo "        value: ${1:q}"
     elif [[ ${#@[@]} -eq 2 ]] && [[ ${__ztap_oneargtests[(Ie)$1]} ]]; then
       echo "  operator: ${notsym}$1 (${not}${__ztap_oneargtests[$1]})"
-      echo "  value: ${2:q}"
+      echo "     value: ${2:q}"
     elif [[ ${#@[@]} -eq 3 ]] && [[ ${__ztap_comparisontests[(Ie)$2]} ]]; then
-      echo "  value: ${1:q}"
-      echo "  operator: ${notsym}$2 (${not}${__ztap_comparisontests[$2]})"
-      echo "  comparison: ${3:q}"
+      echo "      value: ${1:q}"
+      echo "   operator: ${notsym}$2 (${not}${__ztap_comparisontests[$2]})"
+      echo " comparison: ${3:q}"
     else
       echo "  test condition: ${notsym}${@}"
     fi
