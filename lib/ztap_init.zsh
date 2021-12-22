@@ -2,6 +2,10 @@ function @echo() {
   echo "# ${@}"
 }
 
+function @bailout() {
+  echo "Bail out!" "${@}"
+}
+
 function @test() {
   local name="$1"; shift
 
@@ -38,17 +42,21 @@ function @test() {
   fi
 }
 
-function test_runner() {
+function run-test-file() {
+  emulate -L zsh
+  setopt LOCAL_OPTIONS NO_CONTINUE_ON_ERROR
+  set -e
+
+  local errcode filepath
   filepath="$1"
-  if [[ ! -f $filepath ]]; then
-    echo "Bail out!" "File not found $filepath"
-    return 1
+  if [[ ! -f "$filepath" ]]; then
+    @bailout "File not found '$filepath'." && return 1
   fi
   ZTAP_PASSED=0
   ZTAP_FAILED=0
-  source $filepath
   mkdir -p $ZTAP_HOME/.cache
   local resultfile=$ZTAP_HOME/.cache/${filepath:t}
+  source "$filepath" 2>$resultfile.err
   echo "ZTAP_TESTNUM=${ZTAP_TESTNUM}" >| $resultfile
   echo "ZTAP_PASSED=${ZTAP_PASSED}" >> $resultfile
   echo "ZTAP_FAILED=${ZTAP_FAILED}" >> $resultfile

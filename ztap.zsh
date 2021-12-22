@@ -14,6 +14,9 @@ function ztap() {
   local ZTAP_TESTNUM_TOTAL=0
   local ZTAP_PASSED_TOTAL=0
   local ZTAP_FAILED_TOTAL=0
+  local files file testresults
+  typeset -a errors
+  zmodload zsh/mapfile
 
   case $1 in
     -v|--version)
@@ -53,18 +56,31 @@ function ztap() {
     ZDOTDIR=$ZTAP_HOME/rcs \
     ZTAP_HOME=$ZTAP_HOME \
     ZTAP_TESTNUM=$ZTAP_TESTNUM_TOTAL \
-    zsh -d -l -c "test_runner \"$file\""
+    TEST_FILE=$file \
+    zsh -d -l -c 'source $ZTAP_HOME/lib/ztap_init.zsh; run-test-file $TEST_FILE'
 
     # get the results variables from the test run
-    if [[ ! -f $ZTAP_HOME/.cache/${file:t} ]]; then
-      bailout 'Something went wrong. The test results are unavailable.'
-    else
-      source $ZTAP_HOME/.cache/${file:t}
-      command rm $ZTAP_HOME/.cache/${file:t}
-      (( ZTAP_TESTNUM_TOTAL = ZTAP_TESTNUM ))
-      (( ZTAP_PASSED_TOTAL = ZTAP_PASSED_TOTAL + ZTAP_PASSED ))
-      (( ZTAP_FAILED_TOTAL = ZTAP_FAILED_TOTAL + ZTAP_FAILED ))
+    testresults=$ZTAP_HOME/.cache/${file:t}
+
+    if [[ -f $testresults.err ]]; then
+      errors=("${(f)mapfile[$testresults.err]}")
+      command rm $testresults.err
+      if [[ ${#errors[@]} -gt 0 ]] && [[ "$errors" != "" ]]; then
+        bailout "Errors found. ${#errors[@]}" $errors
+        return 1
+      fi
     fi
+
+    if [[ ! -f $testresults ]]; then
+      bailout 'Something went wrong. The test results are unavailable.'
+      return 1
+    fi
+
+    source $testresults
+    command rm $testresults
+    (( ZTAP_TESTNUM_TOTAL = ZTAP_TESTNUM ))
+    (( ZTAP_PASSED_TOTAL = ZTAP_PASSED_TOTAL + ZTAP_PASSED ))
+    (( ZTAP_FAILED_TOTAL = ZTAP_FAILED_TOTAL + ZTAP_FAILED ))
   done
 
   echo
