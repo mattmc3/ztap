@@ -50,12 +50,12 @@ function ztap() {
     ZTAP_TESTNUM=$ZTAP_TESTNUM_TOTAL \
     zsh -d -l -c "test_runner \"$file\""
 
-    # get the results variables form the test run
-    if [[ ! -f $ZTAP_HOME/cache/${file:t} ]]; then
+    # get the results variables from the test run
+    if [[ ! -f $ZTAP_HOME/.cache/${file:t} ]]; then
       echo 'Bail out!' 'Something went wrong and the test run results are unavailable'
     else
-      source $ZTAP_HOME/cache/${file:t}
-      command rm $ZTAP_HOME/cache/${file:t}
+      source $ZTAP_HOME/.cache/${file:t}
+      command rm $ZTAP_HOME/.cache/${file:t}
       (( ZTAP_TESTNUM_TOTAL = ZTAP_TESTNUM ))
       (( ZTAP_PASSED_TOTAL = ZTAP_PASSED_TOTAL + ZTAP_PASSED ))
       (( ZTAP_FAILED_TOTAL = ZTAP_FAILED_TOTAL + ZTAP_FAILED ))
