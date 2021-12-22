@@ -47,8 +47,8 @@ function test_runner() {
   ZTAP_PASSED=0
   ZTAP_FAILED=0
   source $filepath
-  mkdir -p $ZTAP_HOME/cache
-  local resultfile=$ZTAP_HOME/cache/${filepath:t}
+  mkdir -p $ZTAP_HOME/.cache
+  local resultfile=$ZTAP_HOME/.cache/${filepath:t}
   echo "ZTAP_TESTNUM=${ZTAP_TESTNUM}" >| $resultfile
   echo "ZTAP_PASSED=${ZTAP_PASSED}" >> $resultfile
   echo "ZTAP_FAILED=${ZTAP_FAILED}" >> $resultfile
