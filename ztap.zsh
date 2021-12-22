@@ -20,7 +20,7 @@ function ztap() {
 
   case $1 in
     -v|--version)
-        echo "ztap, version 1.0.0"
+        echo "ztap, version 1.1.0"
         return
         ;;
     -h|--help)
