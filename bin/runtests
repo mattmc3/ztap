@@ -11,9 +11,9 @@ function main() {
 
   source $ZTAP_HOME/ztap.zsh
   if [[ $# -gt 0 ]]; then
-    ztap "$@"
+    ztap -c "$@"
   else
-    ztap $ZTAP_HOME/tests/(^fail).zsh(.N)
+    ztap -c $ZTAP_HOME/tests/(^fail).zsh(.N)
   fi
 }
 main "$@"
