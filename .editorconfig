@@ -9,8 +9,7 @@ trim_trailing_whitespace = true
 indent_style = tab
 indent_size = 4
 
-[*.{md,markdown}]
-# Don't trim end spacing because unfortunately Markdown uses that
+[*.md]
 indent_style = space
 trim_trailing_whitespace = false
 
@@ -22,10 +21,6 @@ indent_size = 2
 indent_style = space
 indent_size = 2
 
-[*.fish]
-indent_style = space
-indent_size = 4
-
 [**/functions/*]
 indent_style = space
 indent_size = 2
@@ -33,6 +28,3 @@ indent_size = 2
 [**/bin/*]
 indent_style = space
 indent_size = 2
-
-[*.py]
-indent_style = space
