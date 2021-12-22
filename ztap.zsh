@@ -2,6 +2,11 @@
   typeset -gx ZTAP_HOME=${${(%):-%x}:A:h}
 }
 
+function bailout() {
+  # 'Bail out!' is a TAP term
+  echo "Bail out!" $@
+}
+
 function ztap() {
   local ZTAP_TESTNUM=0
   local ZTAP_PASSED=0
@@ -34,7 +39,7 @@ function ztap() {
   for file in $files; do
     if ! test -f $file; then
       echo >&2 "ztap: invalid file or file not found: '$file'"
-      echo "Bail out!"
+      bailout
       return 1
     fi
   done
@@ -52,7 +57,7 @@ function ztap() {
 
     # get the results variables from the test run
     if [[ ! -f $ZTAP_HOME/.cache/${file:t} ]]; then
-      echo 'Bail out!' 'Something went wrong and the test run results are unavailable'
+      bailout 'Something went wrong. The test results are unavailable.'
     else
       source $ZTAP_HOME/.cache/${file:t}
       command rm $ZTAP_HOME/.cache/${file:t}
