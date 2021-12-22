@@ -7,7 +7,7 @@ function @test() {
 
   (( ZTAP_TESTNUM = ZTAP_TESTNUM + 1 ))
 
-  if test $@; then
+  if [[ $@ ]]; then
     (( ZTAP_PASSED = ZTAP_PASSED + 1 ))
     echo "ok ${ZTAP_TESTNUM} ${name}"
   else
