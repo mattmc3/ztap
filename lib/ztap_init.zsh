@@ -43,10 +43,6 @@ function @test() {
 }
 
 function run-test-file() {
-  emulate -L zsh
-  setopt LOCAL_OPTIONS NO_CONTINUE_ON_ERROR
-  set -e
-
   local errcode filepath
   filepath="$1"
   if [[ ! -f "$filepath" ]]; then
