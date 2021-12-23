@@ -11,7 +11,7 @@ function @test() {
 
   (( ZTAP_TESTNUM = ZTAP_TESTNUM + 1 ))
 
-  if [[ $@ ]]; then
+  if test "$@"; then
     (( ZTAP_PASSED = ZTAP_PASSED + 1 ))
     echo "ok ${ZTAP_TESTNUM} ${name}"
   else
@@ -39,6 +39,7 @@ function @test() {
       echo "  test condition: ${notsym}${@}"
     fi
     echo "  ..."
+    return 1
   fi
 }
 
