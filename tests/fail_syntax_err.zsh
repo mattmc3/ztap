@@ -1,4 +1,4 @@
 @echo "Bad test file"
-@test 1 -eq 1
+@test "test 1 -eq 1" 1 -eq 1
 syntax error
-@test 2 -eq 2
+@test "test 2 -eq 2" 2 -eq 2

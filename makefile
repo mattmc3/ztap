@@ -4,6 +4,10 @@
 test:
 	./bin/runtests
 
+.PHONY: failtest
+failtest:
+	./bin/runtests ./tests/fail*.zsh
+
 .PHONY: help
 help:
 	@echo "Usage:  make <command>"

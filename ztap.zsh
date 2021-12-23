@@ -14,6 +14,7 @@ function ztap() {
   local ZTAP_TESTNUM_TOTAL=0
   local ZTAP_PASSED_TOTAL=0
   local ZTAP_FAILED_TOTAL=0
+  local ZTAP_WARNING_TOTAL=0
   local files file testresults
   typeset -a errors
   zmodload zsh/mapfile
@@ -63,11 +64,12 @@ function ztap() {
     testresults=$ZTAP_HOME/.cache/${file:t}
 
     if [[ -f $testresults.err ]]; then
-      errors=("${(f)mapfile[$testresults.err]}")
+      errors=(${(f)mapfile[$testresults.err]})
       command rm $testresults.err
-      if [[ ${#errors[@]} -gt 0 ]] && [[ "$errors" != "" ]]; then
-        bailout "Errors found. ${#errors[@]}" $errors
-        return 1
+      if [[ ${#errors[@]} -gt 0 ]]; then
+        (( ZTAP_WARNING_TOTAL = ZTAP_WARNING_TOTAL + ${#errors[@]} ))
+        echo "# WARNING: Test wrote to stderr. This may be an indicator of faulty tests."
+        echo "# stderr: ${errors}"
       fi
     fi
 
@@ -86,12 +88,13 @@ function ztap() {
   echo
   echo "1..$ZTAP_TESTNUM_TOTAL"
   echo "# pass $ZTAP_PASSED_TOTAL"
-  test $ZTAP_FAILED_TOTAL -eq 0 &&
+  [[ $ZTAP_WARNING_TOTAL -eq 0 ]] || echo "# warnings $ZTAP_WARNING_TOTAL"
+  [[ $ZTAP_FAILED_TOTAL -eq 0 ]] &&
     echo "# ok" ||
     echo "# fail ${ZTAP_FAILED_TOTAL}"
 
   # return
-  test $ZTAP_FAILED -eq 0
+  [[ $ZTAP_FAILED -eq 0 ]]
 }
 
 function ztapc() {

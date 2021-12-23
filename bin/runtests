@@ -14,6 +14,7 @@ function main() {
     ztap -c "$@"
   else
     ztap -c $ZTAP_HOME/tests/(^fail*).zsh(.N)
+    # ztap -c $ZTAP_HOME/tests/fail*.zsh(.N)
   fi
 }
 main "$@"
