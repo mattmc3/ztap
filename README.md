@@ -1,9 +1,10 @@
 # ZTAP
 
-> An implementation of the [Test Anything Protocol][tap] for unit testing Zsh scripts using pure Zsh
+> An implementation of the [Test Anything Protocol][tap] for unit testing Zsh scripts
+using pure Zsh
 
-ZTAP allows you to test your Zsh scripts using pure Zsh.
-Use it to test anything: scripts, functions, plugins without ever leaving Zsh.
+ZTAP allows you to test your Zsh scripts using pure Zsh. Use it to test anything:
+scripts, functions, plugins, whatever - all without leaving Zsh.
 
 Here's an example to get you started:
 
@@ -24,9 +25,9 @@ ok 1 zsh has a place to call home
 ok 2 the answer to life, the universe, and everything
 not ok 3 got root?
   ---
-  value: mattmc3
   operator: = (strings s1 and s2 are identical)
-  comparison: root
+    value1: mattmc3
+    value2: root
   ...
 
 1..3
@@ -34,8 +35,9 @@ not ok 3 got root?
 # fail 1
 ```
 
-Each test file runs inside its own shell, so you can modify the global environment without cluttering your session or breaking other tests.
-If all the tests pass, `ztap` exits with `0` or `1` otherwise.
+Each test file runs inside its own subshell, so you can modify the global environment
+without cluttering your session or breaking other tests. If all the tests pass, `ztap`
+exits with a return code of `0`, or `1` otherwise.
 
 ## Installation
 
@@ -55,16 +57,20 @@ source ~/.config/zsh/plugins/ztap/ztap.zsh
 
 ## Writing Tests
 
-Tests are defined with the `@test` function. Each test begins with a description, followed by a typical `test` expression.
-Refer to the `test` builtin [documentation](http://zsh.sourceforge.net/Doc/Release/Conditional-Expressions.html) for operators and usage details.
+Tests are defined with the `@test` function. Each test begins with a description,
+followed by a typical `test` expression. Refer to the `test` builtin
+[documentation](http://zsh.sourceforge.net/Doc/Release/Conditional-Expressions.html) for
+operators and usage details.
 
 ```zsh
 @test description [actual] operator expected
 ```
 
-Often you have work that needs to happen before and after tests run like preparing the environment and cleaning up after you're done.
-The best way to do this is directly in your test file.
-Your tests are all written in Zsh, after all.
+### Handling setup/teardown
+
+Often you have work that needs to happen before and after tests run like preparing the
+environment and cleaning up after you're done. The best way to do this is directly in
+your test file. Your tests are all written in Zsh, after all.
 
 ```zsh
 # setup
@@ -78,6 +84,11 @@ touch $tmp/testfile
 # teardown
 rm -rf $tmp
 ```
+
+For more advanced setup/teardown operations, you may consider sourcing a common include
+file. Perhaps writing reusable functions for setup/teardown operations.
+
+### Handling multiline output
 
 When comparing multiline output you have a few options including
 
@@ -98,6 +109,21 @@ It's equivalent to `echo "# $argv"`, which prints a TAP comment.
 
 ```zsh
 @echo "=== example ==="
+```
+
+### Handling stderr
+
+Output to stderr is considered a warning by ZTAP. It could be an indicator of a syntax
+error in your tests, or it could be a normal part of the utility you are testing. It's
+best to always redirect stderr output and explicitly test for it.
+
+```zsh
+# redirect stderr to stdout for success
+output=($(source myutility.zsh 2>&1))
+
+# test output is expected
+expected="it's alive!"
+@test "Is it alive?" "$expected" = "$output"
 ```
 
 ## Using ZTAP in your Zsh project
