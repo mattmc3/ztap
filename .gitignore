@@ -1,3 +1,5 @@
+.ztap/
+.cache/
 .zsh_history
 foo.zsh
-.cache/
+foo
