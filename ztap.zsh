@@ -144,7 +144,16 @@ function ztap() {
         ;;
   esac
 
-  files=(${@:A})
+  if [[ $# -eq 0 ]]; then
+    files=(./tests/*.zsh(N))
+  else
+    files=($@)
+  fi
+
+  if [[ ${#files[@]} -eq 0 ]]; then
+    echo >&2 "ztap: no test files found"
+    return 1
+  fi
   for file in $files; do
     if [[ ! -f $file ]]; then
       echo >&2 "ztap: invalid file or file not found: '$file'"
