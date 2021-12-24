@@ -1,5 +1,7 @@
 # ZTAP
 
+[![MIT License](https://img.shields.io/badge/license-MIT-007EC7.svg)](/LICENSE)
+
 > An implementation of the [Test Anything Protocol][tap] for unit testing Zsh scripts
 using pure Zsh
 
@@ -128,8 +130,18 @@ expected="it's alive!"
 
 ## Using ZTAP in your Zsh project
 
-If you are building a Zsh project and would like to use ZTAP to run tests for that project, it can be helpful to include a simple test runner script.
-I recommend putting the following simple script in your project's `./bin/runtests` file:
+If you are building a Zsh project and would like to use ZTAP to run tests for that
+project, it can be helpful to include a simple test runner script. I recommend putting
+a simple script in your project's `./bin/runtests` file:
+
+```zsh
+#!/usr/bin/env zsh
+[[ -d .ztap ]] || git clone --depth 1 -q https://github.com/mattmc3/ztap.git .ztap
+source ./.ztap/ztap.zsh
+ztap $@
+```
+
+If you want something slightly more robust, use the following script:
 
 ```zsh
 #!/usr/bin/env zsh
@@ -156,11 +168,8 @@ Don't forget to make your `./bin/runtests` file executable:
 chmod 755 ./bin/runtests
 ```
 
-Also, be sure to add `.ztap/` to your `.gitignore` so that you don't check ZTAP into your repo unintentionally.
-
-## License
-
-[MIT](LICENSE.md)
+Also, be sure to add `.ztap/` to your `.gitignore` so that you don't check ZTAP into
+your repo unintentionally.
 
 [tap]: https://testanything.org
 [pz]: https://github.com/mattmc3/pz
