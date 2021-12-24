@@ -1,4 +1,4 @@
 #!/usr/bin/env -S awk -f
 
-/^\# pass /  { print $0; next }
-/^\# fail /  { print $0; next }
+/^\# pass [[:digit:]]+$/  { print $3; next }
+/^\# fail [[:digit:]]+$/  { print $3; next }
