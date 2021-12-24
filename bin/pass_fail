@@ -1,0 +1,4 @@
+#!/usr/bin/env -S awk -f
+
+/^\# pass /  { print $0; next }
+/^\# fail /  { print $0; next }
