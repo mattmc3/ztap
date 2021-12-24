@@ -73,14 +73,14 @@ function @test() {
     fi
     if [[ $# -eq 1 ]]; then
       echo "  operator: none (value is non-empty)"
-      echo "     value: ${1:q}"
+      echo "  value: ${1:q}"
     elif [[ $# -eq 2 ]] && [[ ${ZTAP_ONEARG_TESTS[(Ie)$1]} ]]; then
       echo "  operator: ${notsym}$1 (${notword}${ZTAP_TEST_DESCRIPTIONS[$1]})"
-      echo "     value: ${2:q}"
+      echo "  value: ${2:q}"
     elif [[ $# -eq 3 ]] && [[ ${ZTAP_TWOARG_TESTS[(Ie)$2]} ]]; then
       echo "  operator: ${notsym}$2 (${notword}${ZTAP_TEST_DESCRIPTIONS[$2]})"
-      echo "    value1: ${1:q}"
-      echo "    value2: ${3:q}"
+      echo "  value1: ${1:q}"
+      echo "  value2: ${3:q}"
     else
       echo "  test condition: ${notsym}${@}"
     fi
