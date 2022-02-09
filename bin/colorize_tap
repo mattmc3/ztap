@@ -20,10 +20,10 @@ BEGIN {
 /^ok /           { print GREEN $0 NORMAL; next }
 /^not ok /       { print RED $0 NORMAL; next }
 /^Bail out! /    { print MAGENTA $0 NORMAL; next }
-/^\# ===/        { print CYAN $0 NORMAL; next }
-/^\# ok$/        { print BOLD BRGREEN $0 NORMAL; next }
-/^\# pass /      { print BOLD BRGREEN $0 NORMAL; next }
-/^\# fail /      { print BOLD BRRED $0 NORMAL; next }
-/^\# warnings /  { print BOLD BRYELLOW $0 NORMAL; next }
-/^\#/            { print BRBLACK $0 NORMAL; next }
+/^# ===/        { print CYAN $0 NORMAL; next }
+/^# ok$/        { print BOLD BRGREEN $0 NORMAL; next }
+/^# pass /      { print BOLD BRGREEN $0 NORMAL; next }
+/^# fail /      { print BOLD BRRED $0 NORMAL; next }
+/^# warnings /  { print BOLD BRYELLOW $0 NORMAL; next }
+/^#/            { print BRBLACK $0 NORMAL; next }
                  { print $0 }
