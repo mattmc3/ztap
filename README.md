@@ -45,7 +45,7 @@ exits with a return code of `0`, or `1` otherwise.
 
 Install with a plugin manager:
 
-- [pz][pz]: `pz source mattmc3/ztap`
+- [antidote][antidote]: `antidote bundle mattmc3/ztap`
 
 Install manually:
 
@@ -172,4 +172,4 @@ Also, be sure to add `.ztap/` to your `.gitignore` so that you don't check ZTAP 
 your repo unintentionally.
 
 [tap]: https://testanything.org
-[pz]: https://github.com/mattmc3/pz
+[antidote]: https://github.com/mattmc3/antidote
