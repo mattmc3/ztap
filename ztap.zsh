@@ -205,7 +205,7 @@ function ztap() {
     echo "# fail ${ZTAP_FAILED_TOTAL}"
 
   # return
-  [[ $ZTAP_FAILED -eq 0 ]]
+  [[ $ZTAP_FAILED_TOTAL -eq 0 ]]
 }
 
 function ztapc() {
