@@ -1,4 +1,6 @@
 #!/usr/bin/env -S awk -f
 
+# Show only pass/fail TAP output
+
 /^\# pass [[:digit:]]+$/  { print $3; next }
 /^\# fail [[:digit:]]+$/  { print $3; next }

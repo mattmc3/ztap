@@ -1,5 +1,7 @@
 #!/usr/bin/env -S awk -f
 
+# Take TAP output and colorize it
+
 # https://testanything.org
 BEGIN {
     BOLD="\033[01m"
