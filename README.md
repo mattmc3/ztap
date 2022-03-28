@@ -103,7 +103,7 @@ When comparing multiline output you have a few options including
 
 # collect output to a zsh array
 arr=($(seq 10 1))
-@test "Countdown!" "${arr[@]}" = "10 9 8 7 6 5 4 3 2 1"
+@test "Countdown!" "${arr[*]}" = "10 9 8 7 6 5 4 3 2 1"
 ```
 
 If you want to write to stdout while tests are running, use the `@echo` function.
