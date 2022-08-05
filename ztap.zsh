@@ -1,9 +1,10 @@
 () {
-  typeset -g ZTAP_HOME
+  typeset -g ZTAP_HOME ZTAP_VERSION
   typeset -gax ZTAP_ONEARG_TESTS ZTAP_TWOARG_TESTS
   typeset -gAx ZTAP_TEST_DESCRIPTIONS
 
   ZTAP_HOME=${${(%):-%x}:A:h}
+  ZTAP_VERSION=2.1.0
   ZTAP_ONEARG_TESTS=(-{b,c,d,e,f,g,h,k,n,p,r,s,t,u,w,x,z,L,O,G,S})
   ZTAP_TWOARG_TESTS=(-{nt,ot,ef,eq,ne,gt,ge,lt,le} '=' '!=')
   ZTAP_TEST_DESCRIPTIONS=(
@@ -42,14 +43,16 @@
   )
 }
 
-function @echo() {
-  # TAP echo
-  echo "# ${@}"
+function _ztap_print {
+  echo >&5 "$@"
+}
+
+function @echo {
+  _ztap_print "# $@"
 }
 
 function @bailout() {
-  # TAP 'Bail out!'
-  echo "Bail out!" "${@}"
+  _ztap_print "Bail out!" "$@"
 }
 
 function @test() {
@@ -61,30 +64,30 @@ function @test() {
 
   if test "$@"; then
     (( ZTAP_PASSED = ZTAP_PASSED + 1 ))
-    echo "ok ${ZTAP_TESTNUM} ${name}"
+    _ztap_print "ok ${ZTAP_TESTNUM} ${name}"
   else
     (( ZTAP_FAILED = ZTAP_FAILED + 1 ))
-    echo "not ok ${ZTAP_TESTNUM} ${name}"
-    echo "  ---"
+    _ztap_print "not ok ${ZTAP_TESTNUM} ${name}"
+    _ztap_print "  ---"
     if [[ $1 == "!" ]]; then
       notsym="! "
       notword="*not* "
       shift
     fi
     if [[ $# -eq 1 ]]; then
-      echo "  operator: none (value is non-empty)"
-      echo "  value: ${1:q}"
+      _ztap_print "  operator: none (value is non-empty)"
+      _ztap_print "  value: ${1:q}"
     elif [[ $# -eq 2 ]] && [[ ${ZTAP_ONEARG_TESTS[(Ie)$1]} ]]; then
-      echo "  operator: ${notsym}$1 (${notword}${ZTAP_TEST_DESCRIPTIONS[$1]})"
-      echo "  value: ${2:q}"
+      _ztap_print "  operator: ${notsym}$1 (${notword}${ZTAP_TEST_DESCRIPTIONS[$1]})"
+      _ztap_print "  value: ${2:q}"
     elif [[ $# -eq 3 ]] && [[ ${ZTAP_TWOARG_TESTS[(Ie)$2]} ]]; then
-      echo "  operator: ${notsym}$2 (${notword}${ZTAP_TEST_DESCRIPTIONS[$2]})"
-      echo "  value1: ${1:q}"
-      echo "  value2: ${3:q}"
+      _ztap_print "  operator: ${notsym}$2 (${notword}${ZTAP_TEST_DESCRIPTIONS[$2]})"
+      _ztap_print "  value1: ${1:q}"
+      _ztap_print "  value2: ${3:q}"
     else
-      echo "  test condition: ${notsym}${@}"
+      _ztap_print "  test condition: ${notsym}${@}"
     fi
-    echo "  ..."
+    _ztap_print "  ..."
     return 1
   fi
 }
@@ -119,14 +122,14 @@ function ztap() {
   local ZTAP_PASSED_TOTAL=0
   local ZTAP_FAILED_TOTAL=0
   local ZTAP_WARNING_TOTAL=0
-  local files file testresults
+  local cmd files file testresults
   typeset -a errors
   zmodload zsh/mapfile
   mkdir -p $ZTAP_CACHE_DIR
 
   case $1 in
     -v|--version)
-        echo "ztap, version 2.0.0"
+        echo "ztap, version $ZTAP_VERSION"
         return
         ;;
     -h|--help)
@@ -163,13 +166,15 @@ function ztap() {
 
   echo TAP version 13
   for file in $files; do
+    cmd='source $ZTAP_HOME/ztap.zsh; run-test-file $TEST_FILE > >(sed "s/^/# STDOUT: /" >&2) 5> >(cat)'
+
     # run tests in a clean zsh subprocess
     env -i \
-    ZTAP_HOME=$ZTAP_HOME \
-    ZTAP_CACHE_DIR=$ZTAP_CACHE_DIR \
-    ZTAP_TESTNUM=$ZTAP_TESTNUM_TOTAL \
-    TEST_FILE=$file \
-    zsh --no-globalrcs --no-rcs --login -c 'source $ZTAP_HOME/ztap.zsh; run-test-file $TEST_FILE'
+      ZTAP_HOME=$ZTAP_HOME \
+      ZTAP_CACHE_DIR=$ZTAP_CACHE_DIR \
+      ZTAP_TESTNUM=$ZTAP_TESTNUM_TOTAL \
+      TEST_FILE=$file \
+      zsh --no-globalrcs --no-rcs --login -c "$cmd"
 
     # get the results variables from the test run
     testresults=$ZTAP_HOME/.cache/${file:t}
@@ -179,7 +184,7 @@ function ztap() {
       command rm $testresults.err
       if [[ ${#errors[@]} -gt 0 ]]; then
         (( ZTAP_WARNING_TOTAL = ZTAP_WARNING_TOTAL + ${#errors[@]} ))
-        echo "# WARNING: Test wrote to stderr. This may be an indicator of faulty tests."
+        echo "# !!! Test wrote to stderr. This may be an indicator of faulty tests."
         echo "# stderr: ${errors}"
       fi
     fi
@@ -196,7 +201,7 @@ function ztap() {
     (( ZTAP_FAILED_TOTAL = ZTAP_FAILED_TOTAL + ZTAP_FAILED ))
   done
 
-  echo
+  echo ""
   echo "1..$ZTAP_TESTNUM_TOTAL"
   echo "# pass $ZTAP_PASSED_TOTAL"
   [[ $ZTAP_WARNING_TOTAL -eq 0 ]] || echo "# warnings $ZTAP_WARNING_TOTAL"
