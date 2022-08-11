@@ -2,11 +2,11 @@
 
 .PHONY: test
 test:
-	./bin/runtests
+	./tests/runtests
 
 .PHONY: failtest
 failtest:
-	./bin/runtests ./tests/fail*.zsh
+	./tests/runtests ./tests/fail*.zsh
 
 .PHONY: help
 help:
