@@ -190,7 +190,7 @@ function ztap() {
     fi
 
     if [[ ! -f $testresults ]]; then
-      bailout 'Something went wrong. The test results are unavailable.'
+      @bailout 'Something went wrong. The test results are unavailable.'
       return 1
     fi
 
