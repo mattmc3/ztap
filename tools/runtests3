@@ -1,0 +1,20 @@
+#!/usr/bin/env zsh
+0=${(%):-%x}
+ZTAP_HOME=${0:a:h:h}
+
+function main() {
+  emulate -L zsh
+  setopt local_options extended_glob
+
+  source $ZTAP_HOME/ztap3.zsh
+  local exitcode
+  if [[ $# -gt 0 ]]; then
+    ztap3 "$@" | $ZTAP_HOME/bin/colorize_tap
+    exitcode=$pipestatus[1]
+  else
+    ztap3 $ZTAP_HOME/tests/ztap3/(^fail*).zsh(.N) | $ZTAP_HOME/bin/colorize_tap
+    exitcode=$pipestatus[1]
+  fi
+  return $exitcode
+}
+main "$@"
