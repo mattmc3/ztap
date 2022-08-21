@@ -214,5 +214,5 @@ function ztap() {
 }
 
 function ztapc() {
-  ztap "$@" | $ZTAP_HOME/bin/colorize_tap
+  ztap "$@" | $ZTAP_HOME/bin/colortap
 }
