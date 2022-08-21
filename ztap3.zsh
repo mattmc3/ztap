@@ -1,3 +1,4 @@
+#!/usr/bin/env zsh
 ###
 ### ztap3
 ###
@@ -58,23 +59,25 @@ else
 fi
 mkdir -p "$ZTAP_CACHE_HOME"
 
-o_ztap_chain=()
-for _opt in $@; do
-  if [[ $_opt == "--ztap-chain" ]]; then
-    o_ztap_chain+=($_opt)
-  fi
-done
-unset _opt
+function scrub {
+  1=${1//$'\t'/'\\t'}
+  1=${1//$'\r'/'\\r'}
+  1=${1//$'\n'/'\\n'}
+  REPLY=$1
+  echo $REPLY
+}
 
 function @echo {
   printf "# %s\n" "${(f)@}"
 }
 
 function @bailout {
+  __ZTAP_SUITE_MODE__=
   echo "Bail out!" "$@"
 }
 
 function @test {
+  local REPLY; scrub "$1" &>/dev/null; 1=$REPLY
   local test_result="ok ${ZTAP_TESTNUM} $1"; shift
   (( ZTAP_TESTNUM = ZTAP_TESTNUM + 1 ))
   if test "$@"; then
@@ -122,13 +125,16 @@ function ztap_failure_details {
 }
 
 function ztap_header {
-  (( ! $#o_ztap_chain )) && echo TAP version 13
+  if [[ -z "$__ZTAP_SUITE_MODE__" ]]; then
+    echo TAP version 13
+    echo "# ### ZTAP v3.0.0, test run $(date -u '+%Y-%m-%d %H:%M:%SZ') ### #"
+  fi
   [[ -n "$1" ]] && @echo "=== ${1} ==="
 }
 
 function ztap_footer {
-  if (( $#o_ztap_chain )); then
-    # the footer for ztap chaining is its state on fd3
+  if [[ -n "$__ZTAP_SUITE_MODE__" ]]; then
+    # the footer for ztap suite mode is its state on fd3
     (( ZTAP_TESTS = $ZTAP_PASSED + $ZTAP_FAILED ))
     >&3 echo "export ZTAP_PASSED=$ZTAP_PASSED"
     >&3 echo "export ZTAP_FAILED=$ZTAP_FAILED"
@@ -137,7 +143,6 @@ function ztap_footer {
   else
     local total
     (( total = $ZTAP_PASSED + $ZTAP_FAILED ))
-
     echo ""
     echo "1..${total}"
     echo "# pass $ZTAP_PASSED"
@@ -153,21 +158,32 @@ function ztap_footer {
 function ztap3 {
   local failed_files=()
   local statefile="$ZTAP_CACHE_HOME/.ztap-state-$(date +%Y%m%dT%H%M%SZ).zsh"
-  local file
+  local file errfile stderr exitcode
   local pass_total fail_total
 
   ztap_header
+  export __ZTAP_SUITE_MODE__=1
 
   for file in $@; do
-    $file --ztap-chain 3>$statefile
-    if [[ $? -ne 0 ]]; then
-      @bailout "Error with ${file:t}"
+    errfile="$ZTAP_CACHE_HOME/.ztap-${file:r:t}-stderr-$(date +%Y%m%dT%H%M%SZ).zsh"
+    $file --test-suite 2>$errfile 3>$statefile
+    exitcode=$?
+    stderr=$(<$errfile)
+
+    if [[ -n "$stderr" ]]; then
+      @echo "WARNING: tests wrote to stderr!"
+      @echo "stderr: ${(q-)stderr}"
+    fi
+
+    if [[ $exitcode -ne 0 ]]; then
+      @bailout "Error with ${file:t}."
       return 2
     fi
     if [[ -s $statefile ]]; then
       source $statefile
     else
-      @bailout "Test file did not report state. Be sure to call 'ztap_footer'."
+      @bailout "Test file did not report its state (${file:t})."
+      @bailout "Be sure to call 'ztap_footer'."
       return 2
     fi
     (( pass_total = $pass_total + $ZTAP_PASSED ))
@@ -186,10 +202,11 @@ function ztap3 {
     done
   fi
 
+  unset __ZTAP_SUITE_MODE__
   ztap_footer
 
   # clean up
-  for file in $ZTAP_CACHE_HOME/.ztap-state*(N); do
+  for file in $ZTAP_CACHE_HOME/.ztap-*(N); do
     rm -rf $file
   done
 
