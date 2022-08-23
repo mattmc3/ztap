@@ -2,7 +2,7 @@
 # vi: ft=awk
 
 # Take TAP output and remove header and footer and re-number it
-# for use in a TAP stream
+# for use in a chained TAP stream
 
 BEGIN {
   if ( ! is_digits(testnum) || testnum < 1 ) {
