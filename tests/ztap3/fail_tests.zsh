@@ -12,6 +12,9 @@ unset nothingvar
 nothingvar=something
 @test "now something should be nothing" -z "$nothingvar"
 
+@test "infinite loop # TODO halting problem unsolved" -n ""
+@test "infinite loop 2 # SKIP why run this?" -n ""
+
 @test "success" "" = ""
 
 ztap_footer

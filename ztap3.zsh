@@ -90,10 +90,16 @@ function @test {
     (( ZTAP_PASSED = ZTAP_PASSED + 1 ))
     echo $test_result
   else
-    (( ZTAP_FAILED = ZTAP_FAILED + 1 ))
     echo "not $test_result"
-    __ztap_failure_yaml "$@"
-    return 1
+    if [[ $description = *"# TODO"* ]] ||
+       [[ $description = *"# SKIP"* ]]
+    then
+      (( ZTAP_PASSED = ZTAP_PASSED + 1 ))
+    else
+      (( ZTAP_FAILED = ZTAP_FAILED + 1 ))
+      __ztap_failure_yaml "$@"
+      return 1
+    fi
   fi
 }
 
@@ -151,9 +157,7 @@ function ztap_footer {
 
 function ztap3 {
   local opts
-  zparseopts -A opts -D -F -M -- \
-    c -color=c ||
-    return 1
+  zparseopts -A opts -D -F -M -- c -color=c || return 1
 
   if [[ -v opts[-c] ]] || [[ -v opts[--color] ]]; then
     __ztap_chain "$@" | $ZTAP_BIN/colortap
@@ -169,7 +173,6 @@ function __ztap_chain {
   ZTAP_PASSED_TOTAL=0
   ZTAP_FAILED_TOTAL=0
   ZTAP_TESTNUM=1
-
   ztap_header
 
   for file in $@; do

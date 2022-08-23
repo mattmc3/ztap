@@ -24,14 +24,15 @@ BEGIN {
   }
   next
 }
-/^1\.{2}+[0-9]+$/       { prev_empty=0; next }
-prev_empty              { prev_empty=0; print "" }
-/^ok /                  { pass++; print "ok "     testnum++ " " substr($0, index($0,$3)); next }
-/^not ok /              { fail++; print "not ok " testnum++ " " substr($0, index($0,$4)); next }
-/^TAP version/          { next }
-/^# ### ZTAP /          { next }
-/^# (pass|fail) [0-9]+/ { next }
-/^# ok$/                { next }
+/^1\.{2}+[0-9]+$/           { prev_empty=0; next }
+prev_empty                  { prev_empty=0; print "" }
+/^ok /                      { pass++; print "ok "     testnum++ " " substr($0, index($0,$3)); next }
+/^not ok .*# (TODO|SKIP)/   { pass++; print "not ok " testnum++ " " substr($0, index($0,$4)); next }
+/^not ok /                  { fail++; print "not ok " testnum++ " " substr($0, index($0,$4)); next }
+/^TAP version/              { next }
+/^# ### ZTAP /              { next }
+/^# (pass|fail) [0-9]+/     { next }
+/^# ok$/                    { next }
 
 # default action prints
 { print $0 }
