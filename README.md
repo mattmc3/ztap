@@ -150,8 +150,8 @@ If you want something slightly more robust, use the following script:
 # contents of ./tools/runtests in your project
 
 0=${(%):-%N}
-PROJECT_HOME=${0:a:h:h}
-ZTAP_HOME=${ZTAP_HOME:-$PROJECT_HOME/.ztap}
+PROJECT_HOME=${0:A:h:h}
+export ZTAP_HOME=${ZTAP_HOME:-$PROJECT_HOME/.ztap}
 
 [[ -d $ZTAP_HOME ]] ||
   git clone --depth 1 -q https://github.com/mattmc3/ztap $ZTAP_HOME

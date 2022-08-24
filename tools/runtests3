@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 0=${(%):-%x}
-ZTAP_HOME=${0:a:h:h}
+export ZTAP_HOME=${0:a:h:h}
 
 function main() {
   emulate -L zsh

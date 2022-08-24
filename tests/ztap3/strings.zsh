@@ -1,8 +1,6 @@
 #!/usr/bin/env zsh
 0=${(%):-%x}
-BASEDIR=${0:A:h:h:h}
-
-source $BASEDIR/ztap3.zsh
+source $ZTAP_HOME/ztap3.zsh
 ztap_header "${0:t:r}"
 
 () {
