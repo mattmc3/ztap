@@ -1,17 +1,20 @@
 .DEFAULT_GOAL := help
+all : test test3 failtest help
+.PHONY : all
 
-.PHONY: test
 test:
-	./tests/runtests
+	./tools/runtests
 
-.PHONY: failtest
+test3:
+	./tools/runtests3
+
 failtest:
-	./tests/runtests ./tests/fail*.zsh
+	./tools/runtests ./tests/fail*.zsh
 
-.PHONY: help
 help:
 	@echo "Usage:  make <command>"
 	@echo ""
 	@echo "Commands:"
-	@echo "  help  shows this message"
-	@echo "  test  run unit tests"
+	@echo "  help   shows this message"
+	@echo "  test   run unit tests"
+	@echo "  test3  run ztap3 unit tests"

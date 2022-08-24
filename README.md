@@ -28,8 +28,8 @@ ok 2 the answer to life, the universe, and everything
 not ok 3 got root?
   ---
   operator: = (strings s1 and s2 are identical)
-    value1: mattmc3
-    value2: root
+  value1: mattmc3
+  value2: root
   ...
 
 1..3
@@ -54,7 +54,7 @@ Install manually:
 git clone --depth 1 https://github.com/mattmc3/ztap ~/.config/zsh/plugins/ztap
 
 # source ztap in your .zshrc
-source ~/.config/zsh/plugins/ztap/ztap.zsh
+source ~/.config/zsh/plugins/ztap/ztap3.zsh
 ```
 
 ## Writing Tests
@@ -65,7 +65,7 @@ followed by a typical `test` expression. Refer to the `test` builtin
 operators and usage details.
 
 ```zsh
-@test description [actual] operator expected
+@test <description> [<expected>] <operator> <actual>
 ```
 
 ### Handling setup/teardown
@@ -79,16 +79,18 @@ your test file. Your tests are all written in Zsh, after all.
 tmp=$(mktemp -d)
 
 # run tests
-@test "file doesn't exist yet" ! -f $tmp/testfile
-touch $tmp/testfile
-@test "a file now exists" -f $tmp/testfile
+() {
+  @test "file doesn't exist yet" ! -f $tmp/testfile
+  touch $tmp/testfile
+  @test "a file now exists" -f $tmp/testfile
+}
 
 # teardown
 rm -rf $tmp
 ```
 
 For more advanced setup/teardown operations, you may consider sourcing a common include
-file. Perhaps writing reusable functions for setup/teardown operations.
+file, or even writing reusable functions for setup/teardown operations.
 
 ### Handling multiline output
 
@@ -98,7 +100,7 @@ When comparing multiline output you have a few options including
 - collect your input into an array
 
 ```zsh
-# use echo to collapse
+# You can use echo to collapse
 @test "2,4,6,8! Who do we appreciate?" "$(echo $(seq 2 2 8))" = "2 4 6 8"
 
 # collect output to a zsh array
@@ -145,20 +147,20 @@ If you want something slightly more robust, use the following script:
 
 ```zsh
 #!/usr/bin/env zsh
-# contents of ./bin/runtests in your project
+# contents of ./tools/runtests in your project
 
 0=${(%):-%N}
 PROJECT_HOME=${0:a:h:h}
 ZTAP_HOME=${ZTAP_HOME:-$PROJECT_HOME/.ztap}
 
-[[ -f $ZTAP_HOME/ztap.zsh ]] ||
-  git clone --depth 1 -q https://github.com/mattmc3/ztap.git $ZTAP_HOME
+[[ -d $ZTAP_HOME ]] ||
+  git clone --depth 1 -q https://github.com/mattmc3/ztap $ZTAP_HOME
 
-source $ZTAP_HOME/ztap.zsh
-if [[ $# -gt 0 ]]; then
-  ztap -c "$@"
+source $ZTAP_HOME/ztap3.zsh
+if (( $# )); then
+  ztap3 -c "$@"
 else
-  ztap -c $PROJECT_HOME/tests/*.zsh
+  ztap3 -c $PROJECT_HOME/tests/*.zsh
 fi
 ```
 

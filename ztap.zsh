@@ -1,3 +1,4 @@
+# !!! DEPRECATION WARNING: Please update your scripts to use ZTAP3 !!! #
 () {
   typeset -g ZTAP_HOME ZTAP_VERSION
   typeset -gax ZTAP_ONEARG_TESTS ZTAP_TWOARG_TESTS
@@ -165,6 +166,7 @@ function ztap() {
   done
 
   echo TAP version 13
+  echo "# !!! DEPRECATION WARNING: Please update your scripts to use ZTAP3 !!! #"
   for file in $files; do
     cmd='source $ZTAP_HOME/ztap.zsh; run-test-file $TEST_FILE > >(sed "s/^/# STDOUT: /" >&2) 5> >(cat)'
 
