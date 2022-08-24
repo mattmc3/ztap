@@ -138,9 +138,9 @@ a simple script in your project's `./bin/runtests` file:
 
 ```zsh
 #!/usr/bin/env zsh
-[[ -d .ztap ]] || git clone --depth 1 -q https://github.com/mattmc3/ztap.git .ztap
-source ./.ztap/ztap.zsh
-ztap $@
+[[ -d .ztap ]] || git clone --depth 1 -q https://github.com/mattmc3/ztap .ztap
+source ./.ztap/ztap3.zsh
+ztap3 $@
 ```
 
 If you want something slightly more robust, use the following script:
