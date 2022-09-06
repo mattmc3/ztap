@@ -29,9 +29,11 @@ BEGIN {
 /^# pass /                   { print BOLD BRGREEN $0 NORMAL; next }
 /^# fail /                   { print BOLD BRRED $0 NORMAL; next }
 /^# FAIL: /                  { print BOLD BRRED $0 NORMAL; next }
-/^# warnings /               { print BOLD BRYELLOW $0 NORMAL; next }
-/^# WARNING: /               { print BOLD BRYELLOW $0 NORMAL; next }
-/^# !!! /                    { print MAGENTA $0 NORMAL; next }
+/^# \(warnings /             { print BOLD BRYELLOW $0 NORMAL; next }
+/^# warn(ing)?/              { print YELLOW $0 NORMAL; next }
 /^# stderr: /                { print YELLOW $0 NORMAL; next }
+/^# !!! /                    { print MAGENTA $0 NORMAL; next }
 /^#/                         { print BRBLACK $0 NORMAL; next }
                              { print $0 }
+
+# vi: ft=awk

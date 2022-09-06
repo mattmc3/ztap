@@ -1,5 +1,4 @@
 #!/usr/bin/awk -f
-# vi: ft=awk
 
 # Take TAP output and remove header and footer and re-number it
 # for use in a chained TAP stream
@@ -9,6 +8,7 @@ BEGIN {
     testnum=1
   }
   prev_empty=0
+  warn=0
   pass=0
   fail=0
 }
@@ -29,19 +29,22 @@ prev_empty                  { prev_empty=0; print "" }
 /^ok /                      { pass++; print "ok "     testnum++ " " substr($0, index($0,$3)); next }
 /^not ok .*# (TODO|SKIP)/   { pass++; print "not ok " testnum++ " " substr($0, index($0,$4)); next }
 /^not ok /                  { fail++; print "not ok " testnum++ " " substr($0, index($0,$4)); next }
+/^# warn(ing)?/             { warn++; print $0; next }
 /^TAP version/              { next }
 /^# ### ZTAP /              { next }
 /^# (pass|fail) [0-9]+/     { next }
 /^# ok$/                    { next }
 
 # default action prints
-{ print $0 }
+{ print }
 
 END {
   # print the state to fd3
-  printf "ZTAP_PASSED=%s;ZTAP_FAILED=%s\n", pass, fail | "cat 1>&3"
+  printf "ZTAP_PASSED=%s;ZTAP_WARNINGS=%s;ZTAP_FAILED=%s\n", pass, warn, fail | "cat 1>&3"
 }
 
 function is_digits(n) {
   return n ~ /^[0-9]+$/
 }
+
+# vi: ft=awk

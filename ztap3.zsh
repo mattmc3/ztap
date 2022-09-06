@@ -12,13 +12,14 @@
 
 () {
   0=${(%):-%x}
-  ZTAP_VERSION=3.0.0
+  ZTAP_VERSION=3.0.1
   ZTAP_HOME=${0:A:h}
   ZTAP_BIN=${0:A:h}/bin
   ZTAP_RUNID=$(date -u '+%Y%m%dT%H%M%SZ')
   ZTAP_DATESTAMP=$(date -u '+%Y-%m-%d %H:%M:%SZ')
   ZTAP_TESTNUM=${ZTAP_TESTNUM:-1}
   ZTAP_PASSED=0
+  ZTAP_WARNINGS=0
   ZTAP_FAILED=0
   typeset -Ag ZTAP_OPERATORS=(
     '-b'  "file exists and is a block special file"
@@ -137,7 +138,7 @@ function __ztap_failure_yaml {
 
 function ztap_header {
   echo "TAP version 13"
-  echo "# ### ZTAP v3.0.0, test run $ZTAP_DATESTAMP ### #"
+  echo "# ### ZTAP v${ZTAP_VERSION}, test run $ZTAP_DATESTAMP ### #"
   [[ -n "$1" ]] && @echo "=== ${1} ==="
 }
 
@@ -151,8 +152,11 @@ function ztap_footer {
     echo "# ok"
   else
     echo "# fail $ZTAP_FAILED"
-    return 1
   fi
+  if [[ $ZTAP_WARNINGS -gt 0 ]]; then
+    echo "# (warnings $ZTAP_WARNINGS)"
+  fi
+  [[ $ZTAP_FAILED -eq 0 ]] || return 1
 }
 
 function ztap3 {
@@ -171,6 +175,7 @@ function ztap3 {
 function __ztap_chain {
   local stderr errfile exitcode=0
   ZTAP_PASSED_TOTAL=0
+  ZTAP_WARNINGS_TOTAL=0
   ZTAP_FAILED_TOTAL=0
   ZTAP_TESTNUM=1
   ztap_header
@@ -184,17 +189,20 @@ function __ztap_chain {
 
     stderr=$(<$errfile)
     if [[ -n "$stderr" ]]; then
-      @echo "WARNING: tests wrote to stderr!"
+      @echo "warning: tests wrote to stderr!"
       @echo "stderr: ${(q-)stderr}"
+      (( ZTAP_WARNINGS_TOTAL += 1 ))
     fi
 
     source $statefile
     (( ZTAP_PASSED_TOTAL += ZTAP_PASSED ))
+    (( ZTAP_WARNINGS_TOTAL += ZTAP_WARNINGS ))
     (( ZTAP_FAILED_TOTAL += ZTAP_FAILED ))
     (( ZTAP_TESTNUM += ZTAP_PASSED + ZTAP_FAILED ))
   done
 
   ZTAP_PASSED=$ZTAP_PASSED_TOTAL
+  ZTAP_WARNINGS=$ZTAP_WARNINGS_TOTAL
   ZTAP_FAILED=$ZTAP_FAILED_TOTAL
   ztap_footer
 
