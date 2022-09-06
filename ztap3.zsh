@@ -12,16 +12,16 @@
 
 () {
   0=${(%):-%x}
-  ZTAP_VERSION=3.0.1
-  ZTAP_HOME=${0:A:h}
-  ZTAP_BIN=${0:A:h}/bin
-  ZTAP_RUNID=$(date -u '+%Y%m%dT%H%M%SZ')
-  ZTAP_DATESTAMP=$(date -u '+%Y-%m-%d %H:%M:%SZ')
-  ZTAP_TESTNUM=${ZTAP_TESTNUM:-1}
-  ZTAP_PASSED=0
-  ZTAP_WARNINGS=0
-  ZTAP_FAILED=0
-  typeset -Ag ZTAP_OPERATORS=(
+  typeset -g ZTAP_VERSION=3.0.2
+  typeset -g ZTAP_HOME=${0:A:h}
+  typeset -g ZTAP_BIN=${0:A:h}/bin
+  typeset -g ZTAP_RUNID=$(date -u '+%Y%m%dT%H%M%SZ')
+  typeset -g ZTAP_DATESTAMP=$(date -u '+%Y-%m-%d %H:%M:%SZ')
+  typeset -g ZTAP_TESTNUM=${ZTAP_TESTNUM:-1}
+  typeset -g ZTAP_PASSED=0
+  typeset -g ZTAP_WARNINGS=0
+  typeset -g ZTAP_FAILED=0
+  typeset -gA ZTAP_OPERATORS=(
     '-b'  "file exists and is a block special file"
     '-c'  "file exists and is a character special file"
     '-d'  "directory exists"
@@ -56,12 +56,12 @@
     '!='   "strings s1 and s2 are not identical"
     ''     "value is non-empty"
   )
-  ZTAP_ONEARG_TESTS=(-{b,c,d,e,f,g,h,k,n,p,r,s,t,u,w,x,z,L,O,G,S})
-  ZTAP_TWOARG_TESTS=(-{nt,ot,e=f,eq,ne,gt,ge,lt,le} '=' '!=')
+  typeset -ga ZTAP_ONEARG_TESTS=(-{b,c,d,e,f,g,h,k,n,p,r,s,t,u,w,x,z,L,O,G,S})
+  typeset -ga ZTAP_TWOARG_TESTS=(-{nt,ot,e=f,eq,ne,gt,ge,lt,le} '=' '!=')
   if [[ -n "$XDG_CACHE_HOME" ]]; then
-    ZTAP_CACHE_HOME=$XDG_CACHE_HOME/ztap
+    typeset -g ZTAP_CACHE_HOME=$XDG_CACHE_HOME/ztap
   else
-    ZTAP_CACHE_HOME=$ZTAP_HOME/.cache
+    typeset -g ZTAP_CACHE_HOME=$ZTAP_HOME/.cache
   fi
   mkdir -p "$ZTAP_CACHE_HOME"
 }
