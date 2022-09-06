@@ -4,3 +4,5 @@
 
 /^\# pass [[:digit:]]+$/  { print $3; next }
 /^\# fail [[:digit:]]+$/  { print $3; next }
+
+# vi: ft=awk
